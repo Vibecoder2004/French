@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>法语全栈复习 Ultimate (架构升级版)</title>
+  <title>新大学法语复习</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
@@ -115,7 +115,7 @@
             <h1 class="text-xl sm:text-2xl font-bold text-slate-800 flex items-center gap-2">
               动词变位特训 <span class="text-xs px-2 py-1 rounded bg-orange-100 text-orange-600 border border-orange-200">Pro</span>
             </h1>
-            <p class="text-slate-500 text-xs sm:text-sm mt-1 max-w-2xl">智能纠错 / 覆盖7大核心时态 / s'asseoir 兼容双重变位</p>
+            <p class="text-slate-500 text-xs sm:text-sm mt-1 max-w-2xl">智能纠错 / 覆盖核心时态</p>
           </div>
           
           <div class="flex flex-wrap items-center gap-2 sm:gap-3 bg-slate-50 p-2 rounded-xl border border-slate-100 w-full lg:w-auto">
@@ -153,12 +153,24 @@
           </div>
         </div>
 
-        <div class="flex flex-wrap gap-2 text-xs sm:text-sm font-mono mb-6 pb-4 border-b border-slate-100">
-           <span class="px-3 py-1 bg-slate-100 rounded-full text-slate-500">尝试: <b id="tries">0</b></span>
-           <span class="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full border border-emerald-100">正确: <b id="ok">0</b></span>
-           <span class="px-3 py-1 bg-red-50 text-red-600 rounded-full border border-red-100">错误: <b id="bad">0</b></span>
-           <span class="px-3 py-1 bg-orange-50 text-orange-600 rounded-full border border-orange-100 cursor-pointer hover:bg-orange-100 transition-colors" id="errorCountBtn">错题池: <b id="errorCount">0</b> (点击管理)</span>
+        <div class="flex flex-wrap justify-between items-center gap-2 text-xs sm:text-sm font-mono mb-6 pb-4 border-b border-slate-100">
+   <button id="btnToggleProgress" class="px-4 py-1.5 bg-indigo-50 text-primary border border-indigo-100 rounded-full font-bold hover:bg-indigo-100 transition-colors flex items-center gap-2">
+      <i class="fa fa-trophy"></i> 通关进度: <b id="progressPercent">0%</b>
+   </button>
+   <span class="px-3 py-1.5 bg-orange-50 text-orange-600 rounded-full border border-orange-100 cursor-pointer hover:bg-orange-100 transition-colors font-bold" id="errorCountBtn">
+      <i class="fa fa-exclamation-circle"></i> 错题池: <b id="errorCount">0</b>
+   </span>
+</div>
+
+<div id="progressPanel" class="hidden mb-8 animate-fade-in">
+    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 max-h-96 overflow-y-auto custom-scrollbar">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-slate-700">动词通关表 (Mode 2 全对自动点亮)</h3>
+            <button id="btnResetProgress" class="text-xs text-red-400 hover:text-red-600 underline">重置进度</button>
         </div>
+        <div id="progressGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"></div>
+    </div>
+</div>
 
         <div id="m1Panel" class="max-w-2xl mx-auto py-4 text-center">
             <div class="flex justify-center gap-4 sm:gap-8 mb-8 text-lg">
@@ -415,56 +427,146 @@
       }
     };
 
-    // ============================================================
-    // VerbManager (同前版)
+   // ============================================================
+    // VerbManager (新版 - 含进度追踪)
     // ============================================================
     class VerbManager {
        constructor() {
-          this.session = { errors: [], tries: 0, ok: 0, bad: 0 };
-          this.m2Checked = false; this.m1Awaiting = false;
+          // 只保留错题本逻辑，移除 tries/ok/bad
+          this.session = { errors: [] };
+          this.progress = {}; // 格式: { "aimer_pres": true, "aller_fut": true }
+          this.m2Checked = false; 
+          this.m1Awaiting = false;
           this.verbs = [];
-          try { const saved = localStorage.getItem('fr_errors'); if(saved) this.session.errors = JSON.parse(saved); } catch(e){}
+          
+          // 加载错题
+          try { const savedErr = localStorage.getItem('fr_errors'); if(savedErr) this.session.errors = JSON.parse(savedErr); } catch(e){}
+          // 加载进度
+          try { const savedProg = localStorage.getItem('fr_progress'); if(savedProg) this.progress = JSON.parse(savedProg); } catch(e){}
+
           this.el = {
              mode: document.getElementById('modeSel'), tense: document.getElementById('tenseSel'), 
              hf: document.getElementById('hfOnly'), errFirst: document.getElementById('errFirst'),
              m1: document.getElementById('m1Panel'), m2: document.getElementById('m2Panel'), learn: document.getElementById('learnSection'),
              verbSel: document.getElementById('verbSel'), subjSel: document.getElementById('subjSel'), ans: document.getElementById('answer'),
              fb: document.getElementById('feedback'), verbSel6: document.getElementById('verbSel6'), sixRows: document.getElementById('sixRows'),
-             errPanel: document.getElementById('errorPanel'), errBody: document.getElementById('errorTableBody')
+             errPanel: document.getElementById('errorPanel'), errBody: document.getElementById('errorTableBody'),
+             // 新增 UI 元素
+             progressBtn: document.getElementById('btnToggleProgress'),
+             progressPanel: document.getElementById('progressPanel'),
+             progressGrid: document.getElementById('progressGrid'),
+             progressPercent: document.getElementById('progressPercent'),
+             resetProgBtn: document.getElementById('btnResetProgress')
           };
           this.init();
        }
-       init() { this.updateVerbList(); this.bindEvents(); this.initLearn(); this.newSession(); this.renderErrors(); }
-       saveErrors() { localStorage.setItem('fr_errors', JSON.stringify(this.session.errors)); this.renderErrors(); document.getElementById('errorCount').textContent = this.session.errors.length; }
-       removeError(verb, subj) { this.session.errors = this.session.errors.filter(e => !(e.v === verb && e.s === subj)); this.saveErrors(); }
+
+       init() { 
+          this.updateVerbList(); 
+          this.bindEvents(); 
+          this.initLearn(); 
+          this.newSession(); 
+          this.renderErrors(); 
+          this.updateProgressUI(); // 初始化显示进度
+       }
+
+       saveErrors() { 
+          localStorage.setItem('fr_errors', JSON.stringify(this.session.errors)); 
+          this.renderErrors(); 
+          document.getElementById('errorCount').textContent = this.session.errors.length; 
+       }
+       
+       // 新增：保存进度
+       markProgress(verb, tense) {
+          const key = `${verb}_${tense}`;
+          if (!this.progress[key]) {
+             this.progress[key] = true;
+             localStorage.setItem('fr_progress', JSON.stringify(this.progress));
+             this.updateProgressUI();
+             showToast(`解锁成就：${verb} (${tense})`, 'success');
+          }
+       }
+
+       removeError(verb, subj) { 
+          this.session.errors = this.session.errors.filter(e => !(e.v === verb && e.s === subj)); 
+          this.saveErrors(); 
+       }
+
        updateVerbList() {
           this.verbs = (this.el.hf && this.el.hf.checked) ? Data.hfVerbs : Data.verbs;
-          const fill = (s) => { const val = s.value; s.innerHTML = '<option value="random">🎲 随机</option>' + this.verbs.map(v => `<option>${v}</option>`).join(''); if (this.verbs.includes(val)) s.value = val; };
+          const fill = (s) => { 
+             const val = s.value; 
+             s.innerHTML = '<option value="random">🎲 随机</option>' + this.verbs.map(v => `<option>${v}</option>`).join(''); 
+             if (this.verbs.includes(val)) s.value = val; 
+          };
           fill(this.el.verbSel); fill(this.el.verbSel6);
           const learnSel = document.getElementById('verbLearnSel');
           if(learnSel) { learnSel.innerHTML = ''; this.verbs.forEach(v => learnSel.innerHTML += `<option>${v}</option>`); }
+          
+          this.updateProgressUI(); // 列表更新时刷新进度视图
        }
+
        bindEvents() {
           this.el.mode.addEventListener('change', () => this.switchMode());
           this.el.tense.addEventListener('change', () => this.refreshQ());
           this.el.hf.addEventListener('change', () => { this.updateVerbList(); this.refreshQ(); if(this.el.mode.value==='m3') this.renderLearn(); });
+          
           this.el.verbSel.addEventListener('change', () => this.newM1(true));
           this.el.subjSel.addEventListener('change', () => this.newM1(true));
+          
           document.getElementById('btnNew').addEventListener('click', () => this.newM1());
           document.getElementById('btnCheck').addEventListener('click', () => this.checkM1());
-          document.getElementById('btnReveal').addEventListener('click', () => { if(this.curr) this.el.ans.value = Data.expectedAnswers(this.curr.v, this.curr.s, this.el.tense.value)[0]; this.el.ans.focus(); });
+          document.getElementById('btnReveal').addEventListener('click', () => { 
+             if(this.curr) this.el.ans.value = Data.expectedAnswers(this.curr.v, this.curr.s, this.el.tense.value)[0]; 
+             this.el.ans.focus(); 
+          });
+          
           this.el.ans.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); this.checkM1(); } });
           this.el.ans.addEventListener('input', smartInputHandler);
-          document.querySelectorAll('.kbd').forEach(k => k.addEventListener('click', () => { const v = this.el.ans.value; const p = this.el.ans.selectionStart; this.el.ans.value = v.slice(0,p) + k.dataset.ch + v.slice(p); this.el.ans.focus(); this.el.ans.setSelectionRange(p+1, p+1); }));
+          
+          document.querySelectorAll('.kbd').forEach(k => k.addEventListener('click', () => { 
+             const v = this.el.ans.value; const p = this.el.ans.selectionStart; 
+             this.el.ans.value = v.slice(0,p) + k.dataset.ch + v.slice(p); 
+             this.el.ans.focus(); this.el.ans.setSelectionRange(p+1, p+1); 
+          }));
+          
           document.getElementById('btnNew6').addEventListener('click', () => this.newM2());
           document.getElementById('btnNext6').addEventListener('click', () => this.newM2());
           document.getElementById('btnCheck6').addEventListener('click', () => this.checkM2());
-          document.getElementById('sixRows').addEventListener('keydown', (e) => { if(e.key === 'Enter' && e.target.tagName === 'INPUT') { e.preventDefault(); const inputs = Array.from(this.el.sixRows.querySelectorAll('input')); const idx = inputs.indexOf(e.target); if (idx < inputs.length - 1) { inputs[idx + 1].focus(); } else { if (this.m2Checked) this.newM2(); else this.checkM2(); } } });
+          
+          document.getElementById('sixRows').addEventListener('keydown', (e) => { 
+             if(e.key === 'Enter' && e.target.tagName === 'INPUT') { 
+                e.preventDefault(); 
+                const inputs = Array.from(this.el.sixRows.querySelectorAll('input')); 
+                const idx = inputs.indexOf(e.target); 
+                if (idx < inputs.length - 1) { inputs[idx + 1].focus(); } 
+                else { if (this.m2Checked) this.newM2(); else this.checkM2(); } 
+             } 
+          });
+          
           document.getElementById('errorCountBtn').addEventListener('click', () => { this.el.errPanel.classList.toggle('hidden'); });
           document.getElementById('btnClearErrors').addEventListener('click', () => { if(confirm('永久清空错题本?')){ this.session.errors=[]; this.saveErrors(); } });
           document.getElementById('btnExportCSV').addEventListener('click', () => this.exportCSV());
-          document.getElementById('btnNewSession').addEventListener('click', () => { if(confirm('重置本场统计? (错题本不会被清空)')) { this.session.tries=0; this.session.ok=0; this.session.bad=0; this.renderStats(); this.refreshQ(); } });
+          
+          // 原重置按钮逻辑修改：只刷新题目，不涉及不存在的统计
+          document.getElementById('btnNewSession').addEventListener('click', () => { 
+             this.refreshQ(); 
+             showToast('题目已刷新', 'info');
+          });
+
+          // 新增：进度相关事件
+          this.el.progressBtn.addEventListener('click', () => {
+             this.el.progressPanel.classList.toggle('hidden');
+          });
+          this.el.resetProgBtn.addEventListener('click', () => {
+             if(confirm('确定要清空所有通关记录吗？无法恢复。')) {
+                this.progress = {};
+                localStorage.removeItem('fr_progress');
+                this.updateProgressUI();
+             }
+          });
        }
+
        switchMode() {
           const m = this.el.mode.value;
           this.el.m1.classList.add('hidden'); this.el.m2.classList.add('hidden'); this.el.learn.classList.add('hidden');
@@ -472,8 +574,16 @@
           if(m==='m2') { this.el.m2.classList.remove('hidden'); this.newM2(); }
           if(m==='m3') { this.el.learn.classList.remove('hidden'); this.renderLearn(); }
        }
-       refreshQ() { this.el.mode.value==='m1' ? this.newM1() : (this.el.mode.value==='m2' ? this.newM2() : this.renderLearn()); }
-       newSession() { this.switchMode(); this.renderStats(); }
+
+       refreshQ() { 
+          this.el.mode.value==='m1' ? this.newM1() : (this.el.mode.value==='m2' ? this.newM2() : this.renderLearn()); 
+       }
+
+       newSession() { 
+          this.switchMode(); 
+          this.renderStats(); 
+       }
+
        newM1(preserveSelection = false) {
           this.m1Awaiting = false; let v, s;
           if (!preserveSelection && this.el.errFirst.checked && this.session.errors.length > 0) {
@@ -488,54 +598,130 @@
              const subs = Data.getSubjects(v);
              s = this.el.subjSel.value==='random' ? subs[Math.floor(Math.random()*subs.length)] : this.el.subjSel.value;
           }
-          this.curr = { v, s }; document.getElementById('qVerb').textContent = v; document.getElementById('qSubj').textContent = s;
-          this.el.ans.value = ''; this.el.fb.textContent = ''; 
+          this.curr = { v, s }; 
+          document.getElementById('qVerb').textContent = v; 
+          document.getElementById('qSubj').textContent = s;
+          this.el.ans.value = ''; 
+          this.el.fb.textContent = ''; 
           this.el.ans.className = 'w-full text-center text-xl sm:text-2xl bg-slate-50 border-2 border-slate-200 rounded-xl py-3 px-4 focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-slate-300 font-bold text-slate-700';
-          this.el.ans.focus(); document.getElementById('btnCheck').textContent = "提交 (Enter)";
+          this.el.ans.focus(); 
+          document.getElementById('btnCheck').textContent = "提交 (Enter)";
        }
+
        checkM1() {
           if (this.m1Awaiting) { this.newM1(); return; }
-          const val = norm(this.el.ans.value); const right = Data.expectedAnswers(this.curr.v, this.curr.s, this.el.tense.value).map(norm);
-          this.session.tries++;
+          const val = norm(this.el.ans.value); 
+          const right = Data.expectedAnswers(this.curr.v, this.curr.s, this.el.tense.value).map(norm);
+          
           if(right.includes(val)) {
-             this.session.ok++; this.el.ans.classList.add('border-green-500','bg-green-50','animate-pulse'); 
+             this.el.ans.classList.add('border-green-500','bg-green-50','animate-pulse'); 
              this.el.fb.innerHTML='<span class="text-emerald-600"><i class="fa fa-check"></i> 正确! (按回车继续)</span>';
-             this.removeError(this.curr.v, this.curr.s); this.m1Awaiting = true; document.getElementById('btnCheck').textContent = "下一题 (Enter)";
+             this.removeError(this.curr.v, this.curr.s); 
+             this.m1Awaiting = true; 
+             document.getElementById('btnCheck').textContent = "下一题 (Enter)";
           } else {
-             this.session.bad++; this.el.ans.classList.add('border-red-500','bg-red-50','animate-shake'); 
+             this.el.ans.classList.add('border-red-500','bg-red-50','animate-shake'); 
              this.el.fb.innerHTML=`<span class="text-red-600">错误. 参考: ${Data.expectedAnswers(this.curr.v, this.curr.s, this.el.tense.value)[0]}</span>`;
              setTimeout(()=>this.el.ans.classList.remove('animate-shake'), 500);
              this.session.errors.push({v:this.curr.v, s:this.curr.s, u:this.el.ans.value, r:Data.expectedAnswers(this.curr.v, this.curr.s, this.el.tense.value)[0]});
-             this.saveErrors(); this.m1Awaiting = true; document.getElementById('btnCheck').textContent = "下一题 (Enter)";
+             this.saveErrors(); 
+             this.m1Awaiting = true; 
+             document.getElementById('btnCheck').textContent = "下一题 (Enter)";
           }
-          this.renderStats();
        }
+
        newM2() {
           this.m2Checked = false; 
           const v = this.el.verbSel6 && this.el.verbSel6.value !== 'random' ? this.el.verbSel6.value : this.verbs[Math.floor(Math.random()*this.verbs.length)];
-          document.getElementById('qVerb6').textContent = v; this.el.sixRows.innerHTML = '';
+          document.getElementById('qVerb6').textContent = v; 
+          this.el.sixRows.innerHTML = '';
           Data.getSubjects(v).forEach(s => {
              this.el.sixRows.innerHTML += `<div class="flex items-center gap-2 mb-2" data-s="${s}"><span class="w-16 text-right font-bold text-slate-500 text-xs uppercase">${s}</span><input class="m2-in flex-1 bg-white border border-slate-200 rounded px-2 py-2 outline-none focus:border-primary" placeholder="?"><span class="w-6 fb-icon"></span></div>`;
           });
-          this.curr6 = v; document.getElementById('btnCheck6').innerHTML = '<i class="fa fa-check"></i> 核对全部'; const first = this.el.sixRows.querySelector('input'); if(first) first.focus();
+          this.curr6 = v; 
+          document.getElementById('btnCheck6').innerHTML = '<i class="fa fa-check"></i> 核对全部'; 
+          const first = this.el.sixRows.querySelector('input'); if(first) first.focus();
        }
+
        checkM2() {
-          this.m2Checked = true; let allOk = true;
+          this.m2Checked = true; 
+          let allOk = true;
+          const currentTense = this.el.tense.value;
+
           this.el.sixRows.querySelectorAll('div[data-s]').forEach(row => {
-             const s = row.dataset.s; const inp = row.querySelector('.m2-in'); const icon = row.querySelector('.fb-icon');
-             const val = norm(inp.value); const right = Data.expectedAnswers(this.curr6, s, this.el.tense.value).map(norm);
+             const s = row.dataset.s; 
+             const inp = row.querySelector('.m2-in'); 
+             const icon = row.querySelector('.fb-icon');
+             const val = norm(inp.value); 
+             const right = Data.expectedAnswers(this.curr6, s, currentTense).map(norm);
+             
              if(right.includes(val)) {
-                inp.classList.add('border-green-500','bg-green-50'); icon.innerHTML='<i class="fa fa-check text-green-500"></i>'; this.removeError(this.curr6, s);
+                inp.classList.add('border-green-500','bg-green-50'); 
+                icon.innerHTML='<i class="fa fa-check text-green-500"></i>'; 
+                this.removeError(this.curr6, s);
              } else {
-                allOk = false; inp.classList.add('border-red-500','bg-red-50'); icon.innerHTML='<i class="fa fa-times text-red-500"></i>';
-                this.session.errors.push({v:this.curr6, s:s, u:inp.value, r:Data.expectedAnswers(this.curr6, s, this.el.tense.value)[0]});
-                inp.value += ` (${Data.expectedAnswers(this.curr6, s, this.el.tense.value)[0]})`;
+                allOk = false; 
+                inp.classList.add('border-red-500','bg-red-50'); 
+                icon.innerHTML='<i class="fa fa-times text-red-500"></i>';
+                this.session.errors.push({v:this.curr6, s:s, u:inp.value, r:Data.expectedAnswers(this.curr6, s, currentTense)[0]});
+                inp.value += ` (${Data.expectedAnswers(this.curr6, s, currentTense)[0]})`;
              }
           });
+
           if(!allOk) this.saveErrors();
-          if(allOk) { showToast('全对!','success'); setTimeout(() => this.newM2(), 1000); } 
-          else { this.renderStats(); document.getElementById('btnCheck6').innerHTML = '下一题 <i class="fa fa-arrow-right"></i>'; document.getElementById('btnCheck6').onclick = () => { this.newM2(); document.getElementById('btnCheck6').onclick = () => this.checkM2(); }; }
+
+          if(allOk) { 
+             showToast('全对！完美！', 'success');
+             // ============ 核心修改：全对时记录进度 ============
+             this.markProgress(this.curr6, currentTense);
+             // ===============================================
+             setTimeout(() => this.newM2(), 1200); 
+          } else { 
+             document.getElementById('btnCheck6').innerHTML = '下一题 <i class="fa fa-arrow-right"></i>'; 
+             document.getElementById('btnCheck6').onclick = () => { 
+                this.newM2(); 
+                document.getElementById('btnCheck6').onclick = () => this.checkM2(); 
+             }; 
+          }
        }
+
+       // 新增：渲染进度网格
+       updateProgressUI() {
+          const tenses = [
+             {k:'pres', n:'现'}, {k:'fut', n:'将'}, {k:'pc', n:'复'}, 
+             {k:'imp', n:'未'}, {k:'pqp', n:'愈'}, {k:'pp', n:'分'}
+          ];
+          
+          let totalItems = this.verbs.length * tenses.length;
+          let doneItems = 0;
+
+          this.el.progressGrid.innerHTML = '';
+          
+          this.verbs.forEach(v => {
+             let badges = '';
+             tenses.forEach(t => {
+                const isDone = this.progress[`${v}_${t.k}`];
+                if(isDone) doneItems++;
+                const color = isDone ? 'bg-emerald-500 text-white border-emerald-600' : 'bg-slate-100 text-slate-300 border-slate-200';
+                // 点击Badge跳转到该动词该时态进行练习
+                badges += `<span class="px-1.5 py-0.5 text-[10px] rounded border ${color} cursor-default" title="${t.n}">${t.n}</span>`;
+             });
+
+             const card = document.createElement('div');
+             card.className = "bg-white p-3 rounded-lg border border-slate-100 shadow-sm flex flex-col gap-2";
+             card.innerHTML = `
+                <div class="font-bold text-slate-700 text-sm flex justify-between">
+                   <span>${v}</span>
+                </div>
+                <div class="flex gap-1 flex-wrap">${badges}</div>
+             `;
+             this.el.progressGrid.appendChild(card);
+          });
+
+          const pct = Math.round((doneItems / totalItems) * 100) || 0;
+          this.el.progressPercent.textContent = `${pct}%`;
+       }
+
        initLearn() {
           document.getElementById('verbLearnSel').addEventListener('change', ()=>this.renderLearn());
           document.getElementById('tenseLearnSel').addEventListener('change', ()=>this.renderLearn());
@@ -545,6 +731,7 @@
              this.renderLearn();
           }));
        }
+
        renderLearn() {
           const mode = document.getElementById('learnByTense').checked ? 'tense' : 'verb';
           const container = document.getElementById('learnDisplay'); container.innerHTML = '';
@@ -566,9 +753,23 @@
              });
           }
        }
-       renderStats() { document.getElementById('tries').textContent = this.session.tries; document.getElementById('ok').textContent = this.session.ok; document.getElementById('bad').textContent = this.session.bad; document.getElementById('errorCount').textContent = this.session.errors.length; }
-       renderErrors() { this.el.errBody.innerHTML = ''; this.session.errors.slice().reverse().slice(0, 20).forEach(e => { this.el.errBody.innerHTML += `<tr class="border-b"><td class="p-2">${e.v}</td><td class="p-2">${e.s}</td><td class="p-2 text-red-500">${e.u}</td><td class="p-2 text-green-600">${e.r}</td></tr>`; }); }
-       exportCSV() { const csv = "Verb,Subject,User,Correct\n" + this.session.errors.map(e => `${e.v},${e.s},"${e.u}","${e.r}"`).join("\n"); const a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv); a.download = 'errors.csv'; a.click(); }
+
+       renderStats() { 
+          // 仅更新错题数
+          document.getElementById('errorCount').textContent = this.session.errors.length; 
+       }
+
+       renderErrors() { 
+          this.el.errBody.innerHTML = ''; 
+          this.session.errors.slice().reverse().slice(0, 20).forEach(e => { 
+             this.el.errBody.innerHTML += `<tr class="border-b"><td class="p-2">${e.v}</td><td class="p-2">${e.s}</td><td class="p-2 text-red-500">${e.u}</td><td class="p-2 text-green-600">${e.r}</td></tr>`; 
+          }); 
+       }
+
+       exportCSV() { 
+          const csv = "Verb,Subject,User,Correct\n" + this.session.errors.map(e => `${e.v},${e.s},"${e.u}","${e.r}"`).join("\n"); 
+          const a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv); a.download = 'errors.csv'; a.click(); 
+       }
     }
 
     // ============================================================
@@ -745,7 +946,91 @@
     let gm;
 
     // ... LessonTrans 和 HomeworkTrans 保持不变 (省略以节省篇幅) ...
-    class LessonTrans { constructor() { this.lessons = Data.lessonsRaw.map(x=>({title:x.title, frFull:x.fr, cnFull:x.cn, frArr:x.fr.split('\n').filter(s=>s.trim()), cnArr:x.cn.split('\n').filter(s=>s.trim()), noPara:x.noPara})); this.el={mode:document.getElementById('ltMode'),sel:document.getElementById('ltLesson'),src:document.getElementById('ltSource'),in:document.getElementById('ltInput'),next:document.getElementById('btnLtNext'),show:document.getElementById('ltShowRef'),refW:document.getElementById('ltRefWrap'),ref:document.getElementById('ltRef'),prog:document.getElementById('ltProgress')}; this.state={idx:0,para:0,revealed:false}; this.el.sel.innerHTML='<option value="random">🎲 随机</option>'+this.lessons.map((l,i)=>`<option value="${i}">${l.title}</option>`).join(''); this.el.sel.addEventListener('change',()=>this.load()); this.el.mode.addEventListener('change',()=>this.load()); this.el.next.addEventListener('click',()=>this.next()); this.el.show.addEventListener('click',()=>{if(this.state.revealed)this.next();else this.show()}); this.el.in.addEventListener('keydown',(e)=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();if(!this.state.revealed)this.show();else this.next()}}); this.load(); } load(){ const i=this.el.sel.value==='random'?Math.floor(Math.random()*this.lessons.length):parseInt(this.el.sel.value); this.curr=this.lessons[i]; this.state={idx:i,para:0,revealed:false}; if(this.curr.noPara){this.el.mode.value='full';this.el.mode.disabled=true}else{this.el.mode.disabled=false} this.render(); } render(){ this.el.in.value=''; this.el.refW.classList.add('hidden'); this.el.show.textContent="参考 (Enter)"; this.state.revealed=false; if(this.el.mode.value==='full'){this.el.src.textContent=this.curr.frFull;this.el.ref.textContent=this.curr.cnFull;this.el.prog.textContent="全文模式"}else{this.el.src.textContent=this.curr.frArr[this.state.para]||"End";this.el.ref.textContent=this.curr.cnArr[this.state.para]||"End";this.el.prog.textContent=`段落: ${this.state.para+1}/${this.curr.frArr.length}`} } show(){this.el.refW.classList.remove('hidden');this.el.show.textContent="下一题 (Enter)";this.state.revealed=true} next(){if(this.el.mode.value==='full'){this.load()}else{if(this.state.para<this.curr.frArr.length-1){this.state.para++;this.render()}else{this.load()}}} }
+   class LessonTrans { 
+       constructor() { 
+          this.lessons = Data.lessonsRaw.map(x=>({
+             title:x.title, frFull:x.fr, cnFull:x.cn, 
+             frArr:x.fr.split('\n').filter(s=>s.trim()), 
+             cnArr:x.cn.split('\n').filter(s=>s.trim()), 
+             noPara:x.noPara
+          }));
+          this.el={
+             mode:document.getElementById('ltMode'),
+             sel:document.getElementById('ltLesson'),
+             src:document.getElementById('ltSource'),
+             in:document.getElementById('ltInput'),
+             next:document.getElementById('btnLtNext'),
+             show:document.getElementById('ltShowRef'),
+             refW:document.getElementById('ltRefWrap'),
+             ref:document.getElementById('ltRef'),
+             prog:document.getElementById('ltProgress')
+          }; 
+          this.state={idx:0,para:0,revealed:false}; 
+          
+          this.el.sel.innerHTML='<option value="random">🎲 随机</option>'+this.lessons.map((l,i)=>`<option value="${i}">${l.title}</option>`).join(''); 
+          this.el.sel.addEventListener('change',()=>this.load()); 
+          this.el.mode.addEventListener('change',()=>this.load()); 
+          this.el.next.addEventListener('click',()=>this.next()); 
+          this.el.show.addEventListener('click',()=>{if(this.state.revealed)this.next();else this.show()}); 
+          
+          // === 修改点 1：将快捷键改为 Ctrl + Enter ===
+          this.el.in.addEventListener('keydown',(e)=>{
+             if(e.key==='Enter' && e.ctrlKey){ // 只有按住 Ctrl 才提交
+                e.preventDefault();
+                if(!this.state.revealed)this.show();
+                else this.next();
+             }
+          }); 
+          this.load(); 
+       } 
+       
+       load(){ 
+          const i=this.el.sel.value==='random'?Math.floor(Math.random()*this.lessons.length):parseInt(this.el.sel.value); 
+          this.curr=this.lessons[i]; 
+          this.state={idx:i,para:0,revealed:false};
+          if(this.curr.noPara){this.el.mode.value='full';this.el.mode.disabled=true}else{this.el.mode.disabled=false} 
+          this.render(); 
+       } 
+       
+       render(){ 
+          this.el.in.value=''; 
+          // === 修改点 2：更新提示文字 ===
+          this.el.in.placeholder = "在此尝试翻译... (按 Ctrl + Enter 查看答案，支持直接回车换行)";
+          
+          this.el.refW.classList.add('hidden'); 
+          this.el.show.textContent="参考 (Ctrl+Enter)"; 
+          this.state.revealed=false; 
+          
+          if(this.el.mode.value==='full'){
+             this.el.src.textContent=this.curr.frFull;
+             this.el.ref.textContent=this.curr.cnFull;
+             this.el.prog.textContent="全文模式";
+          }else{
+             this.el.src.textContent=this.curr.frArr[this.state.para]||"End";
+             this.el.ref.textContent=this.curr.cnArr[this.state.para]||"End";
+             this.el.prog.textContent=`段落: ${this.state.para+1}/${this.curr.frArr.length}`;
+          } 
+       } 
+       
+       show(){
+          this.el.refW.classList.remove('hidden');
+          this.el.show.textContent="下一题 (Ctrl+Enter)";
+          this.state.revealed=true;
+       } 
+       
+       next(){
+          if(this.el.mode.value==='full'){
+             this.load();
+          }else{
+             if(this.state.para<this.curr.frArr.length-1){
+                this.state.para++;
+                this.render();
+             }else{
+                this.load();
+             }
+          }
+       } 
+    }
     class HomeworkTrans { constructor() { this.lessons=Data.homeworkRaw; this.el={sel:document.getElementById('hwLesson'),src:document.getElementById('hwSource'),in:document.getElementById('hwInput'),next:document.getElementById('btnHwNext'),show:document.getElementById('btnHwShowRef'),refW:document.getElementById('hwRefWrap'),ref:document.getElementById('hwRef'),prog:document.getElementById('hwProgress')}; this.state={idx:0,qIdx:0,revealed:false}; this.el.sel.innerHTML='<option value="random">🎲 随机</option>'+this.lessons.map((l,i)=>`<option value="${i}">${l.title}</option>`).join(''); this.el.sel.addEventListener('change',()=>this.load()); this.el.next.addEventListener('click',()=>this.next()); this.el.show.addEventListener('click',()=>{if(this.state.revealed)this.next();else this.show()}); this.el.in.addEventListener('keydown',(e)=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();if(!this.state.revealed)this.show();else this.next()}}); this.load(); } load(){ const i=this.el.sel.value==='random'?Math.floor(Math.random()*this.lessons.length):parseInt(this.el.sel.value); this.curr=this.lessons[i]; this.state={idx:i,qIdx:0,revealed:false}; this.render(); } render(){ const q=this.curr.qas[this.state.qIdx]; this.el.src.textContent=q.cn; this.el.ref.textContent=q.fr; this.el.prog.textContent=`${this.state.qIdx+1}/${this.curr.qas.length}`; this.el.in.value=''; this.el.refW.classList.add('hidden'); this.el.show.textContent="查看答案 (Enter)"; this.state.revealed=false; } show(){this.el.refW.classList.remove('hidden');this.el.show.textContent="下一题 (Enter)";this.state.revealed=true} next(){if(this.state.qIdx<this.curr.qas.length-1){this.state.qIdx++;this.render()}else{this.load()}} }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -766,5 +1051,4 @@
     });
   </script>
 </body>
-
 </html>
