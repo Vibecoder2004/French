@@ -445,7 +445,100 @@ Hier, à l’entrée du bureau de l’ANPE, j’ai rencontré Claire Lamy, une f
 “是啊，这对您来说不容易。我理解。”
 “您知道吗，先生，我的一天是怎么过的吗？早上六点起床，我赶快起身，叫醒孩子们。吃过早饭后，我帮他们准备好，再送他们去学校。如果有时间，我在上班前会顺便买点东西。九点到十二点，我工作。中午，我很简单地吃午饭，一个三明治和一杯咖啡，然后稍微休息一下。下午一点到五点，我继续工作。之后，回家要花一个小时。晚饭以后，我得洗碗、哄孩子睡觉、洗衣服……所以，到了晚上，我就非常疲惫了。幸好我丈夫在家的时候会帮我。”`,
     noPara: true
-  }
+  },
+  {
+id: 'lecon1',
+    title: 'La France',
+    fr: `La France se trouve en Europe occidentale, elle a une superficie métropolitaine de 550 000 kilomètres carrés et une population de 67 millions d'habitants environ (en 2019).
+La France est entourée de nombreux pays : au nord-est, la Belgique et le Luxembourg ; à l'est, l'Allemagne, la Suisse ; au sud-est, l'Italie ; au sud-ouest, l'Espagne ; et au nord-ouest, elle est séparée du Royaume-Uni par La Manche.
+Elle est baignée à l'ouest par l'océan Atlantique, au sud par la Méditerranée. Il y a beaucoup de montagnes, surtout à la frontière. Les plus importantes sont : les Alpes à l'est et les Pyrénées au sud. Le mont Blanc est le plus élevé d'Europe occidentale.
+De nombreux cours d'eau parcourent la France, et les plus connus sont : la Seine, la Loire, la Garonne (ces fleuves se jettent dans l'océan Atlantique) et le Rhône (dans la Méditerranée). La Loire est le fleuve le plus long de France.
+Paris est la capitale, la plus grande ville de France. Après Paris, les plus grandes villes sont : Marseille, le plus grand port sur la Méditerranée ; Lyon, un des plus grands centres industriels du pays ; Bordeaux, une ville connue pour ses vins ; Lille, grand centre industriel du Nord de France.
+La France est un pays agricole et industriel. Elle est l'un des pays les plus importants d'Europe, sur le plan politique, économique et culturel.`,
+    cn: `法国位于西欧，本土面积为 55 万平方公里，人口约为 6700 万（2019）。
+法国有众多的邻国：东北部有比利时和卢森堡；东部有德国、瑞士；东南部有意大利；西南部有西班牙；西北部，拉芒什（英吉利）海峡将法国与联合王国（英国）分隔开来。
+法国的西部濒临大西洋，南部是地中海。法国有许多山脉，尤其是在国界线上。主要的山脉有：东部的阿尔卑斯山和南部的比利牛斯山。勃朗峰是西欧最高的山峰。
+众多的江河流经法国，最有名的是：塞纳河、卢瓦尔河、加龙河（这些河流入大西洋）和罗纳河（流入地中海）。卢瓦尔河是法国最长的河流。
+巴黎是法国的首都，也是最大的城市。在巴黎之后的大城市有：地中海最大的港口马赛、国家最大的工业中心之一里昂、以葡萄酒著称的波尔多、法国北部重要的工业中心里尔。
+法国既是一个农业国，也是一个工业国，在政治、经济和文化方面，法国都是欧洲最重要的国家之一。`,
+  noPara: true
+  },
+  {
+    id: 'lecon2',
+    title: 'Sciences et technologie',
+    fr: `Le futur : des innovations de toutes sortes.
+Avec le développement des sciences et des techniques, tout sera bientôt possible. Des innovations, telles qu'Internet, l'intelligence artificielle, la réalité virtuelle, les téléphones intelligents, les robots... qui sont déjà entrées dans notre vie quotidienne, dessinent le monde de demain : un monde que, bien souvent, on ne peut pas imaginer aujourd'hui.
+L'informatique
+Les ordinateurs, les téléphones intelligents et Internet proposent déjà de nombreux services : faire les courses, gérer son compte bancaire, faire du commerce, rechercher des documents, voir un film, se communiquer... on peut même consulter un médecin, ou suivre des cours... Et quel sera l'avenir de l'informatique avec l'apparition de la 5G?
+Les transports
+Aujourd'hui, l'homme, au lieu de rester toujours chez lui, se déplace partout pour le travail ou pour voyager. Il recherche donc toujours des informations sur les moyens de transport : la vitesse, le confort, la sécurité et la protection de l'environnement... On aura un train sans conducteur avec une vitesse de plus de 700 km/h (300 km/h de plus que le TGV actuel), un avion électrique, une voiture autonome...
+La monnaie électronique
+Mise en service dès les années 90 au siècle dernier, et dans des pays développés au début, la monnaie électronique remplace aujourd'hui une partie importante des paiements en espèces. Avec une seule carte de crédit, on peut voyager dans n'importe quel pays, et on peut se déplacer en Chine seulement avec son téléphone intelligent. Pour rendre le paiement plus facile, la monnaie numérique et virtuelle apparaîtront...
+L'intelligence artificielle
+Le concept de l'intelligence artificielle (IA) est de faire penser les machines « comme des humains » ; en d'autres termes, effectuer des tâches telles que raisonner, apprendre et comprendre notre langage.
+L'intelligence artificielle permettra à des machines d'accomplir des tâches et de résoudre des problèmes normalement réservés aux hommes. Ce seront des machines intelligentes, des robots avec une intelligence artificielle qui auront des sentiments, des plaisirs, des peurs, et des valeurs morales, et pourront tout faire comme les humains.`,
+    cn: `未来：各种各样的创新。
+随着科学技术的发展，一切都将成为可能。许多创新，例如已经进入我们日常生活的因特网、人工智能、虚拟现实、智能手机、机器人……勾画出了明天的世界：那是一个我们现在往往无法想象的世界。
+信息技术
+电脑、智能手机、因特网已经提供了许多服务：购物、管理银行账户、做生意、查找资料、看电影、交流……甚至可以咨询医生、上网课……随着5G的出现，信息技术的未来将会是什么样的呢？
+交通
+现如今，人们不总是待在家里，而是为了工作和旅游经常到处奔波。因此，人们总是查询交通方式方面的信息：速度、舒适度、安全度和环保……我们将会有时速超过700公里的无人驾驶火车（时速比目前高速火车TGV快300公里）、电动飞机、自动驾驶汽车……
+电子货币
+自上世纪90年代开始，首先在一些发达国家使用的电子货币，目前替代了大量的现金支付。只需一张信用卡，我们就可以去任何一个国家旅游，只需一部智能手机，我们就可以走遍中国。为了让支付更加便利，数字货币和虚拟货币将会出现……
+人工智能
+人工智能的概念就是让机器“像人一样去思考”；换言之，就是能够执行诸如推理、学习与理解我们的语言等任务。
+人工智能能使机器能去完成通常情况下本该由人完成的任务和由人解决的问题。这就是智能机器，人工智能机器人将会有情感、有喜悦、有害怕、有道德规范，它们将可以像人类一样做所有的事情。`,
+  noPara: true
+  },
+  {
+    id: 'lecon3',
+    title: "L'Union européenne",
+    fr: `Créée à partir de six États, l'Union européenne (l'UE) s'est élargie à neuf, à quinze puis à 25... en 2013, à 28 États membres (dont la Croatie est devenue le 28ᵉ État membre cette année-là), et compte 27 États membres actuellement (le 31 janvier 2020, le Royaume-Uni a quitté l'Union européenne).
+Avec la création de cette union sans frontières, les États membres, différents en taille, en culture et en conditions de vie, ont pour objectif de développer ensemble l'économie, de résoudre des problèmes et de faciliter les échanges entre les pays. L'utilisation d'une monnaie unique parmi les membres de l'Union européenne permet d'améliorer la situation de l'emploi, de réduire les écarts de niveau de vie et de renforcer la force de l'Europe dans le monde.
+L'Union européenne veut développer non seulement la force politique et économique de sa zone, mais aussi ses cultures et ses habitudes. C'est ainsi que chaque année ont lieu, à travers tous les pays, des activités artistiques et culturelles : expositions, festivals de théâtre, de musique, etc. Grâce à cette union, les citoyens des États membres peuvent faire ce qu'ils veulent, ont plus de chance de se déplacer, de choisir le lieu de travail où ils se sentent à l'aise, d'établir leurs entreprises dans les régions de leur choix...
+L'Union européenne a déjà obtenu plusieurs succès, mais elle tend vers un avenir encore meilleur. Est-ce qu'on pourra voir un continent plus développé, quand on aura réalisé une union totale de l'Europe?`,
+    cn: `欧洲联盟（欧盟）成立之初有 6 个成员国，后来扩大到 9 个、15 个，然后是 25 个……2013 年，成员国数量达到了 28 个（克罗地亚于该年成为第 28 个成员国），目前成员国数量为 27 个（2020 年 1 月 31 日，英国退出了欧盟）。
+随着无国界联盟的建立，规模、文化以及生活条件各不相同的成员国才有了共同的目标，就是共同发展经济，解决问题，促进各国之间的交流。在欧盟成员国之间使用统一的货币可以改善就业的状况，缩小生活水平的差距，并且加强欧洲在世界上的实力。
+欧盟不仅要发展欧盟地区的政治和经济实力，还要发展文化和传统。因此，各国每年都会举行文化艺术活动：展览、戏剧节和音乐节，等等。得益于该联盟，成员国的居民可以做他们想做的事情，他们可以更为方便地出行，选择他们适合的工作地点，在他们选择的区域建立企业……
+欧盟已经取得了许多成果，但是还渴望走向更美好的未来。当欧洲成立一个完全的联盟后，人们将会看到一个更加发达的大陆吗？`,
+  noPara: true
+  },
+  {
+    id: 'lecon4',
+    title: "L'enseignement supérieur en France",
+    fr: `Que faire, quand on a fini son bac et qu'on désire poursuivre ses études dans les établissements supérieurs？
+Comme la qualité de l'enseignement supérieur en France est reconnue dans le monde entier, les lycéens ont beaucoup de choix.
+Les institutions de l'enseignement supérieur en France sont organisées en trois catégories principales : universités publiques, grandes écoles, écoles d'art et d'architecture.
+Première possibilité : entrer à l'université. Les formations y sont très variées : les universités proposent des programmes dans toutes les disciplines. Les études y sont divisées en trois cycles (LMD) : le premier, de trois ans, est un cycle de formation fondamentale qui conduit à l'obtention de la licence ; le deuxième est un cycle d'approfondissement qui permet, après deux ans d'études, d'obtenir le diplôme de master ; le troisième cycle, c'est le doctorat, il faut au minimum trois ans d'études.
+Un étudiant peut également suivre des études supérieures courtes dans les IUT (institut universitaire de technologie). Il peut obtenir en deux ans le DUT (diplôme universitaire de technologie) qui lui permet d'entrer dans la vie professionnelle.
+Pour entrer dans une « grande école », les lycéens doivent passer un concours assez strict. En général, après le bac, ils doivent suivre deux ou trois ans de cours selon leur choix (littérature, économie, commerce ou science) dans une classe préparatoire pour préparer les concours. Les grandes écoles constituent toujours une voie royale. Les plus connues sont : l'École polytechnique, l'École nationale d'administration (ENA), l'École normale supérieure (ENS), l'École des hautes études commerciales de Paris (HEC), l'Institut d'études politiques de Paris (Sciences Po)... Elles forment principalement les cadres de l'État et des entreprises.
+Il y a encore la formation STS (section de technicien supérieur) : bac + 2. Les lycéens peuvent faire leur choix entre plus de 100 spécialités : du commerce à la chimie, de la mécanique au textile, du tourisme au bâtiment... Les études finissent deux ans après par l'obtention du BTS (brevet de technicien supérieur), qui permet aux étudiants de choisir un futur métier sans trop de difficultés！
+À la rentrée 2019-2020, on compte en France 2,73 millions d'étudiants inscrits dans l'enseignement supérieur.`,
+    cn: `通过了高中毕业会考并想继续在高等学校学习，应该怎么做呢？
+由于法国高等教育的质量得到了全世界的认可，因此高中生有很多的选择。
+法国的高等教育机构主要分为三大类：公立大学、精英大学、艺术及建筑学校。
+第一种可能性是进入公立大学。这里的教育多种多样，大学提供各学科的教育。在大学里，学业分为三个阶段（本科、硕士、博士）：第一阶段为期三年，是基础教育阶段，最后获得学士学位；第二阶段是深入学习的阶段，在两年的学习后，可以获得硕士学位；第三阶段是博士学位阶段，通常至少需要三年的学习时间。
+大学生还可以在大学技术学院（IUT）接受短期的高等教育。用两年的时间获得进入职业生涯的大学技术文凭（DUT）。
+为了进入精英大学，学生要参加一个十分严格的考试。通常，为了备考，在高中毕业后，他们要根据自己的选择（文学、经济、贸易或者科学），在预科班上两至三年的课程。精英大学始终是一条通向未来的康庄大道。最出名的是：综合理工大学、国家行政管理学院、高等师范学院、巴黎高等商学院、巴黎政治学院…… 它们主要培养国家和企业的干部。
+还有高等技术教育（STS）：取得中学毕业会考文凭后再进行两年的大学学习。学生可以有 100 多个专业的选择：从经济到化学、从机械学到纺织、从旅游到建筑…… 两年的学习后获得高级技师文凭（BTS），这让学生们在未来选择自己的职业时不会有太多的困难。
+在 2019—2020 学年期间，法国有 273 万大学生在高等学校进行了注册。`,
+  noPara: true
+  },
+  {
+    id: 'lecon5',
+    title: 'Le logement en France',
+    fr: `Après la Seconde Guerre mondiale, un des plus importants problèmes en France, c'était le logement. Dès lors, des centaines de milliers de logements ont été construits dans la région parisienne... des HLM aux immeubles de luxe. Beaucoup de Français rêvaient de pouvoir être propriétaires un jour.
+Selon un rapport de l'Institut national de la statistique et des études économiques (Insee), au 1er janvier 2018, la France (hors Mayotte) comptait au total plus de 35,4 millions de logements. Les résidences principales qui représentaient plus des trois quarts de l'ensemble des logements français, étaient au nombre de 28,98 millions, alors que les résidences secondaires (pour les weekends, les loisirs ou les vacances) atteignaient près de 3,5 millions d'habitations. Près de quatre logements sur cinq étaient des habitats collectifs (appartements) dans l'agglomération parisienne en 2018, tandis que les habitats individuels (maisons) des agglomérations de moins de 100 000 habitants représentaient environ six logements sur dix.
+En 2015, un peu plus de la moitié des Français se disaient tout à fait satisfaits de leur logement, notamment dans les régions du Sud-Ouest et du Nord-Est, où la satisfaction par rapport au logement était d'environ 60 %. De même, le coût du logement, représentait près d'un quart du revenu disponible des ménages en 2017.
+D'après une enquête faite par l'Institut français d'opinion publique (IFOP) en 2018, les Français trouvent qu'il n'est pas facile de devenir propriétaire d'un bien immobilier. La part des propriétaires de résidence principale reste stable au cours de ces dernières années. Le nombre de logements sociaux, destinés aux ménages des classes sociales les plus populaires, s'élevait à plus de cinq millions en janvier 2018.
+Par ailleurs, la vie à la campagne attire les Français, qui représentaient près de 45 % à souhaiter vivre dans un village en 2018, alors qu'environ 15 % des ménages préféraient habiter dans une grande ville. Travailler en ville, habiter à la campagne, une maison individuelle avec un jardin, en banlieue, au bord d'un lac ou au pied d'une montagne, voici la vie de leur rêve.`,
+    cn: `第二次世界大战之后，法国最主要的问题之一，就是住房问题。从那时起，在巴黎地区建起了成千上万的住房…… 从低租金住房到豪华住宅。许多法国人期望有一天能够成为房主。
+根据法国国家统计与经济研究所（Insee）的一份报告，2018 年 1 月 1 日，法国（马约特岛除外）住房总数超过了 3540 万套。常住住所占到了住房总数的四分之三以上，数量达到了 2898 万套，而第二居所（用于周末、娱乐及假期居住）的数量达到了 350 万套左右。2018 年，在巴黎地区，大约五分之四的住房为集体住房（公寓），而在 10 万人以下的住宅区里，独栋住宅（独户住宅）占十分之六。
+2015 年，一半多的法国人表示对住房完全满意，尤其是在西南地区和东北地区，住房的满意度近 60%。在 2017 年，房屋的费用也几乎占家庭可支配收入的四分之一。
+根据法国公共舆论研究所（IFOP）在 2018 年所做的调查，法国人认为成为不动产的主人并非一件容易的事。近些年间，常住住所的房主比例保持稳定。提供给普通社会阶层的社会福利住房的数量，在 2018 年 1 月上升到了 500 多万套。
+另外，农村生活吸引着法国人，2018 年，有 45% 的法国人希望生活在乡村，而只有 15% 的家庭更喜欢居住在大城市里。工作在城里，居住在乡下，拥有一所位于郊区、湖边或者山脚下的带有花园的别墅，这就是他们梦想的生活。`,
+ noPara: true
+  },
 ];
 
 // ============================================================
@@ -571,6 +664,63 @@ window.HOMEWORK_RAW = [
       { cn: '皮埃尔在地下室安装了一台仪器。', fr: 'Pierre a installé un appareil au sous-sol.' },
       { cn: '她被小城的美丽风光吸引了。', fr: 'Elle a été attirée par les beaux paysages de cette petite ville.' },
       { cn: '他决心创立一种崭新的艺术风格。', fr: 'Il a décidé de créer un nouveau style d’art.' }
+    ]
+  },
+  {
+id: 'lecon1',
+    title: 'La France',
+    qas: [
+      { cn: '法国有很多山脉和河流。', fr: 'Il y a beaucoup de montagnes et de cours d\'eau en France.' },
+      { cn: '塞纳河流经巴黎，注入拉芒什海峡。', fr: 'La Seine parcourt Paris et se jette dans la Manche.' },
+      { cn: '法国是欧洲最重要的国家之一。', fr: 'La France est un des plus importants pays d\'Europe.' },
+      { cn: '这两个村庄被一条河隔开。', fr: 'Ces deux villages sont séparés par une rivière.' },
+      { cn: '这个国家以葡萄酒、香水、奶酪著称于世。', fr: 'Ce pays est connu dans le monde pour ses vins, ses parfums et ses fromages.' }
+   ]
+  },
+  {
+    id: 'lecon2',
+    title: 'Sciences et technologie',
+    qas: [
+      { cn: '马路上有各式各样的车辆。', fr: 'Il y a des voitures de toutes sortes dans la rue.' },
+      { cn: '带着智能手机，我们就可以去购物了。', fr: 'Nous pouvons faire des achats avec un téléphone intelligent.' },
+      { cn: '不用去图书馆，我们就可以在网络上看书。', fr: 'Au lieu d\'aller à la bibliothèque, on peut lire sur Internet.' },
+      { cn: '我经常在网上寻找信息。', fr: 'Je cherche souvent des informations sur Internet.' },
+      { cn: '电子商务在全世界迅速地发展起来。', fr: 'Le commerce électronique se développe rapidement dans le monde entier.' },
+      { cn: '交通更加方便，有许多公共交通工具，例如，公交车，地铁……', fr: 'La circulation est plus pratique, il y a beaucoup de moyens de transport en commun, tels que l\'autobus, le métro...' }
+    ]
+  },
+  {
+    id: 'lecon3',
+    title: "L'Union européenne",
+    qas: [
+      { cn: '这个展览会什么时候举行？', fr: 'Quand aura lieu cette exposition？' },
+      { cn: '为便于大学生之间的交流，我们举办了很多文艺活动。', fr: 'Nous avons organisé des activités culturelles pour faciliter les échanges entre les étudiants.' },
+      { cn: '在统一货币使用初期，大家遇到困难了吗？', fr: 'Est-ce qu\'on a rencontré des difficultés au commencement de l\'utilisation d\'une monnaie unique？' },
+      { cn: '还有国家想脱离欧盟吗？', fr: 'Est-ce qu\'il y a encore des pays qui voudront quitter l\'UE？' },
+      { cn: '现在，欧盟有 27 个成员国。', fr: 'Aujourd\'hui, l\'Union européenne comprend 27 États membres.' },
+      { cn: '多亏该联盟，人们可以自由往来、选择工作和生活场所。', fr: 'Grâce à cette union, on peut se déplacer et choisir librement le lieu de travail et de vie.' },
+      { cn: '我们的任务是发展经济和改善生活条件。', fr: 'Nous avons pour objectif de développer l\'économie et d\'améliorer les conditions de vie.' },
+      { cn: '我们将会创建亚洲联盟吗？', fr: 'Est-ce que nous créerons l\'Union asiatique？' }
+    ]
+  },
+  {
+    id: 'lecon4',
+    title: "L'enseignement supérieur en France",
+    qas: [
+      { cn: '我想在高中毕业后去法国学习。', fr: 'Je veux poursuivre mes études en France après avoir passé le bac.' },
+      { cn: '很多年轻人喜欢去 IUT 继续学习，因为在毕业后比较容易找到工作。', fr: 'Beaucoup de jeunes aiment continuer leurs études à l\'IUT, parce que c\'est facile de trouver un travail après.' },
+      { cn: '要上精英大学很难，因为要参加一个很严格的考试。', fr: 'C\'est difficile d\'entrer dans les grandes écoles, parce qu\'il faut passer un concours strict.' },
+      { cn: '在法国有国家行政管理学院、巴黎高等商学院、高等师范学院、巴黎政治学院…… 你的选择是什么？', fr: 'En France, il y a ENA, HEC, ENS, Science Po... Quel est ton choix？' }
+    ]
+  },
+  {
+    id: 'lecon5',
+    title: 'Le logement en France',
+    qas: [
+      { cn: '为了改善居住条件，最近十来年间建了许多楼房。', fr: 'On a construit beaucoup de bâtiments au cours de ces dix dernières années pour améliorer les conditions d\'habitation.' },
+      { cn: '法国人都期望成为房产的主人。', fr: 'Les Français rêvent tous de devenir propriétaires d\'un bien immobilier.' },
+      { cn: '很多法国人在乡下有一个度假住宅。', fr: 'Beaucoup de Français ont une résidence secondaire à la campagne.' },
+      { cn: '常住住所占法国住房总数的四分之三以上。', fr: 'Les résidences principales représentent plus des trois quarts de l\'ensemble des logements français.' }
     ]
   }
 ];
