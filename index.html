@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- 核心数据文件 -->
   <script src="french_data.js"></script>
 
@@ -86,6 +86,9 @@
         </div>
         <span class="font-bold text-base sm:text-lg tracking-tight text-slate-800 hidden sm:inline">French<span class="text-primary">Ultimate</span></span>
       </div>
+      <div id="authDisplay" class="ml-4 flex items-center gap-2 text-xs">
+    <button id="btnLoginModal" class="px-3 py-1 bg-slate-800 text-white rounded hover:bg-slate-700 transition">登录/注册</button>
+</div>
       
       <nav class="flex p-1 bg-slate-100/80 rounded-xl border border-slate-200/60 overflow-x-auto no-scrollbar">
         <button data-section="verbSection" class="tab-link active-tab px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-bold rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900 focus:outline-none flex items-center gap-2 whitespace-nowrap bg-white text-primary shadow-sm">
@@ -339,7 +342,21 @@
        </div>
     </div>
   </main>
-
+<div id="authModal" class="hidden fixed inset-0 z-[60] bg-black/50 flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden">
+        <div class="p-6 space-y-4">
+            <h3 class="text-xl font-bold text-slate-800">账号同步</h3>
+            <input type="email" id="authEmail" class="w-full border p-2 rounded" placeholder="邮箱">
+            <input type="password" id="authPwd" class="w-full border p-2 rounded" placeholder="密码 (至少6位)">
+            <div id="authMsg" class="text-xs text-red-500 h-4"></div>
+            <div class="flex gap-3">
+                <button id="btnDoLogin" class="flex-1 py-2 bg-primary text-white rounded font-bold">登录</button>
+                <button id="btnDoSignUp" class="flex-1 py-2 border rounded font-bold">注册</button>
+            </div>
+            <button onclick="document.getElementById('authModal').classList.add('hidden')" class="w-full text-xs text-slate-400 mt-2">关闭</button>
+        </div>
+    </div>
+</div>
   <script>
     // 基础函数
     function norm(str) { return (str || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase().replace(/’/g, "'").replace(/\s+/g, ' '); }
@@ -468,12 +485,14 @@
           this.newSession(); 
           this.renderErrors(); 
           this.updateProgressUI(); // 初始化显示进度
+          this.auth = new AuthManager(this);
        }
 
        saveErrors() { 
           localStorage.setItem('fr_errors', JSON.stringify(this.session.errors)); 
           this.renderErrors(); 
           document.getElementById('errorCount').textContent = this.session.errors.length; 
+          if(this.auth) this.auth.saveData('errors', this.session.errors);
        }
        
        // 新增：保存进度
@@ -484,6 +503,7 @@
              localStorage.setItem('fr_progress', JSON.stringify(this.progress));
              this.updateProgressUI();
              showToast(`解锁成就：${verb} (${tense})`, 'success');
+             if(this.auth) this.auth.saveData('progress', this.progress);
           }
        }
 
@@ -1032,7 +1052,87 @@
        } 
     }
     class HomeworkTrans { constructor() { this.lessons=Data.homeworkRaw; this.el={sel:document.getElementById('hwLesson'),src:document.getElementById('hwSource'),in:document.getElementById('hwInput'),next:document.getElementById('btnHwNext'),show:document.getElementById('btnHwShowRef'),refW:document.getElementById('hwRefWrap'),ref:document.getElementById('hwRef'),prog:document.getElementById('hwProgress')}; this.state={idx:0,qIdx:0,revealed:false}; this.el.sel.innerHTML='<option value="random">🎲 随机</option>'+this.lessons.map((l,i)=>`<option value="${i}">${l.title}</option>`).join(''); this.el.sel.addEventListener('change',()=>this.load()); this.el.next.addEventListener('click',()=>this.next()); this.el.show.addEventListener('click',()=>{if(this.state.revealed)this.next();else this.show()}); this.el.in.addEventListener('keydown',(e)=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();if(!this.state.revealed)this.show();else this.next()}}); this.load(); } load(){ const i=this.el.sel.value==='random'?Math.floor(Math.random()*this.lessons.length):parseInt(this.el.sel.value); this.curr=this.lessons[i]; this.state={idx:i,qIdx:0,revealed:false}; this.render(); } render(){ const q=this.curr.qas[this.state.qIdx]; this.el.src.textContent=q.cn; this.el.ref.textContent=q.fr; this.el.prog.textContent=`${this.state.qIdx+1}/${this.curr.qas.length}`; this.el.in.value=''; this.el.refW.classList.add('hidden'); this.el.show.textContent="查看答案 (Enter)"; this.state.revealed=false; } show(){this.el.refW.classList.remove('hidden');this.el.show.textContent="下一题 (Enter)";this.state.revealed=true} next(){if(this.state.qIdx<this.curr.qas.length-1){this.state.qIdx++;this.render()}else{this.load()}} }
+const SUPA_URL = 'https://kyesnqdokdcgkcjxfcvf.supabase.co';
+    const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5ZXNucWRva2RjZ2tjanhmY3ZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY1NDg3NzAsImV4cCI6MjA4MjEyNDc3MH0.pzp0K6zwQUiQR99-pRvjsvuHHpcGVyURTby_e9sFEPI';
 
+    class AuthManager {
+        constructor(verbMgr) {
+            this.verbMgr = verbMgr;
+            this.supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+            this.user = null;
+            this.el = {
+                modal: document.getElementById('authModal'),
+                email: document.getElementById('authEmail'),
+                pwd: document.getElementById('authPwd'),
+                msg: document.getElementById('authMsg'),
+                display: document.getElementById('authDisplay')
+            };
+            this.init();
+        }
+
+        init() {
+            document.getElementById('btnLoginModal').addEventListener('click', () => this.el.modal.classList.remove('hidden'));
+            document.getElementById('btnDoLogin').addEventListener('click', () => this.handle('login'));
+            document.getElementById('btnDoSignUp').addEventListener('click', () => this.handle('signup'));
+            
+            // 检查当前会话
+            this.supa.auth.getSession().then(({ data: { session } }) => {
+                if (session?.user) this.onLogin(session.user);
+            });
+        }
+
+        async handle(type) {
+            const email = this.el.email.value;
+            const password = this.el.pwd.value;
+            this.el.msg.textContent = "处理中...";
+            
+            const { data, error } = type === 'signup' 
+                ? await this.supa.auth.signUp({ email, password })
+                : await this.supa.auth.signInWithPassword({ email, password });
+
+            if (error) {
+                this.el.msg.textContent = error.message;
+            } else {
+                if(type === 'signup') alert('注册成功！请检查邮箱确认链接（如果开启了验证），或直接登录。');
+                if(type === 'login') this.onLogin(data.user);
+            }
+        }
+
+        onLogin(user) {
+            this.user = user;
+            this.el.modal.classList.add('hidden');
+            this.el.display.innerHTML = `<span class="text-slate-600"><i class="fa fa-user"></i> ${user.email.split('@')[0]}</span> <button id="btnLogout" class="underline ml-2">退出</button>`;
+            document.getElementById('btnLogout').onclick = async () => {
+                await this.supa.auth.signOut();
+                window.location.reload();
+            };
+            this.loadData();
+        }
+
+        async saveData(type, json) {
+            if(!this.user) return;
+            await this.supa.from('user_progress').upsert({ user_id: this.user.id, data_type: type, content: json }, { onConflict: 'user_id, data_type' });
+        }
+
+        async loadData() {
+            const { data } = await this.supa.from('user_progress').select('*').eq('user_id', this.user.id);
+            if(data) {
+                data.forEach(row => {
+                    if(row.data_type === 'errors') {
+                        this.verbMgr.session.errors = row.content;
+                        localStorage.setItem('fr_errors', JSON.stringify(row.content));
+                        this.verbMgr.renderErrors();
+                    }
+                    if(row.data_type === 'progress') {
+                        this.verbMgr.progress = row.content;
+                        localStorage.setItem('fr_progress', JSON.stringify(row.content));
+                        this.verbMgr.updateProgressUI();
+                    }
+                });
+                showToast('云端数据已同步', 'success');
+            }
+        }
+    }
     document.addEventListener('DOMContentLoaded', () => {
        if (typeof window.VERB_LIST === 'undefined') { document.getElementById('data-error-banner').classList.remove('hidden'); return; }
        const tabs = document.querySelectorAll('.tab-link'); const sections = document.querySelectorAll('.main-section');
@@ -1052,3 +1152,4 @@
   </script>
 </body>
 </html>
+
