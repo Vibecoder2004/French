@@ -78,7 +78,7 @@
 
   <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 max-w-sm w-full pointer-events-none"></div>
 
-  <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm transition-all">
+  <header id="appHeader" class="hidden sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm transition-all">
     <div class="container mx-auto px-4 h-14 sm:h-16 flex items-center justify-between max-w-6xl">
       <div class="flex items-center gap-2 sm:gap-3">
         <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white shadow-glow transform hover:scale-105 transition-transform">
@@ -107,7 +107,7 @@
     </div>
   </header>
 
-  <main class="container mx-auto px-4 py-6 sm:py-8 max-w-6xl space-y-6">
+  <main id="appMain" class="hidden container mx-auto px-4 py-6 sm:py-8 max-w-6xl space-y-6">
     
     <!-- ==================== 1. 动词板块 (完整保留) ==================== -->
     <div id="verbSection" class="main-section animate-slide-up">
@@ -342,18 +342,30 @@
        </div>
     </div>
   </main>
-<div id="authModal" class="hidden fixed inset-0 z-[60] bg-black/50 flex items-center justify-center p-4 backdrop-blur-sm">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden">
-        <div class="p-6 space-y-4">
-            <h3 class="text-xl font-bold text-slate-800">账号同步</h3>
-            <input type="email" id="authEmail" class="w-full border p-2 rounded" placeholder="邮箱">
-            <input type="password" id="authPwd" class="w-full border p-2 rounded" placeholder="密码 (至少6位)">
-            <div id="authMsg" class="text-xs text-red-500 h-4"></div>
-            <div class="flex gap-3">
-                <button id="btnDoLogin" class="flex-1 py-2 bg-primary text-white rounded font-bold">登录</button>
-                <button id="btnDoSignUp" class="flex-1 py-2 border rounded font-bold">注册</button>
+<div id="authModal" class="fixed inset-0 z-[60] bg-slate-900 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden animate-slide-up">
+        <div class="p-8">
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">
+                    <i class="fa fa-lock"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800">内测系统</h3>
+                <p class="text-xs text-slate-400 mt-1">请登录个人账号</p>
             </div>
-            <button onclick="document.getElementById('authModal').classList.add('hidden')" class="w-full text-xs text-slate-400 mt-2">关闭</button>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">账号</label>
+                    <input type="email" id="authEmail" class="w-full border border-slate-200 rounded p-3 focus:border-primary outline-none transition-colors" placeholder="user@example.com">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">密码</label>
+                    <input type="password" id="authPwd" class="w-full border border-slate-200 rounded p-3 focus:border-primary outline-none transition-colors" placeholder="••••••">
+                </div>
+                <div id="authMsg" class="text-xs text-red-500 min-h-[1rem] text-center font-bold"></div>
+                
+                <button id="btnDoLogin" class="w-full py-3 bg-primary text-white rounded-lg font-bold hover:bg-primary-hover shadow-lg shadow-primary/30 active:scale-95 transition-all">安全登录</button>
+            </div>
         </div>
     </div>
 </div>
@@ -1055,81 +1067,162 @@
 const SUPA_URL = 'https://kyesnqdokdcgkcjxfcvf.supabase.co';
     const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5ZXNucWRva2RjZ2tjanhmY3ZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY1NDg3NzAsImV4cCI6MjA4MjEyNDc3MH0.pzp0K6zwQUiQR99-pRvjsvuHHpcGVyURTby_e9sFEPI';
 
+// ============================================================
+    // AuthManager - 强制登录版 (严禁注册)
+    // ============================================================
+    const SUPA_URL = 'YOUR_SUPABASE_URL'; // ★ 保持你之前的 URL
+    const SUPA_KEY = 'YOUR_SUPABASE_KEY'; // ★ 保持你之前的 Key
+
     class AuthManager {
         constructor(verbMgr) {
             this.verbMgr = verbMgr;
-            this.supa = supabase.createClient(SUPA_URL, SUPA_KEY);
             this.user = null;
+            
+            // UI 元素引用
             this.el = {
+                header: document.getElementById('appHeader'),
+                main: document.getElementById('appMain'),
                 modal: document.getElementById('authModal'),
                 email: document.getElementById('authEmail'),
                 pwd: document.getElementById('authPwd'),
+                btnLogin: document.getElementById('btnDoLogin'),
                 msg: document.getElementById('authMsg'),
-                display: document.getElementById('authDisplay')
+                display: document.getElementById('authDisplay') // 这个其实也可以删了，因为必须登录才能看
             };
-            this.init();
+
+            // 初始化 Supabase
+            if(typeof supabase === 'undefined') {
+                alert('系统错误：无法连接到安全组件');
+                return;
+            }
+            this.supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+            this.bindEvents();
+            this.checkUser();
         }
 
-        init() {
-            document.getElementById('btnLoginModal').addEventListener('click', () => this.el.modal.classList.remove('hidden'));
-            document.getElementById('btnDoLogin').addEventListener('click', () => this.handle('login'));
-            document.getElementById('btnDoSignUp').addEventListener('click', () => this.handle('signup'));
+        bindEvents() {
+            // 只保留登录点击事件
+            if(this.el.btnLogin) {
+                this.el.btnLogin.addEventListener('click', () => this.handleLogin());
+            }
             
-            // 检查当前会话
-            this.supa.auth.getSession().then(({ data: { session } }) => {
-                if (session?.user) this.onLogin(session.user);
+            // 允许回车登录
+            this.el.pwd.addEventListener('keydown', (e) => {
+                if(e.key === 'Enter') this.handleLogin();
             });
         }
 
-        async handle(type) {
-            const email = this.el.email.value;
-            const password = this.el.pwd.value;
-            this.el.msg.textContent = "处理中...";
+        async checkUser() {
+            // 检查当前会话
+            const { data: { session } } = await this.supa.auth.getSession();
             
-            const { data, error } = type === 'signup' 
-                ? await this.supa.auth.signUp({ email, password })
-                : await this.supa.auth.signInWithPassword({ email, password });
-
-            if (error) {
-                this.el.msg.textContent = error.message;
+            if (session?.user) {
+                // ★ 已登录：解锁界面
+                this.unlockApp(session.user);
             } else {
-                if(type === 'signup') alert('注册成功！请检查邮箱确认链接（如果开启了验证），或直接登录。');
-                if(type === 'login') this.onLogin(data.user);
+                // ★ 未登录：保持界面锁定，无需做任何事，因为 HTML 默认就是 hidden 的
+                // 且 Modal 默认是显示的
             }
         }
 
-        onLogin(user) {
+        unlockApp(user) {
             this.user = user;
+            
+            // 1. 隐藏登录框
             this.el.modal.classList.add('hidden');
-            this.el.display.innerHTML = `<span class="text-slate-600"><i class="fa fa-user"></i> ${user.email.split('@')[0]}</span> <button id="btnLogout" class="underline ml-2">退出</button>`;
-            document.getElementById('btnLogout').onclick = async () => {
-                await this.supa.auth.signOut();
-                window.location.reload();
-            };
-            this.loadData();
-        }
+            
+            // 2. 显示主界面 (移除 hidden 类)
+            this.el.header.classList.remove('hidden');
+            this.el.main.classList.remove('hidden');
+            this.el.header.classList.add('animate-fade-in'); // 加个淡入动画更好看
+            this.el.main.classList.add('animate-slide-up');
 
-        async saveData(type, json) {
-            if(!this.user) return;
-            await this.supa.from('user_progress').upsert({ user_id: this.user.id, data_type: type, content: json }, { onConflict: 'user_id, data_type' });
-        }
-
-        async loadData() {
-            const { data } = await this.supa.from('user_progress').select('*').eq('user_id', this.user.id);
-            if(data) {
-                data.forEach(row => {
-                    if(row.data_type === 'errors') {
-                        this.verbMgr.session.errors = row.content;
-                        localStorage.setItem('fr_errors', JSON.stringify(row.content));
-                        this.verbMgr.renderErrors();
-                    }
-                    if(row.data_type === 'progress') {
-                        this.verbMgr.progress = row.content;
-                        localStorage.setItem('fr_progress', JSON.stringify(row.content));
-                        this.verbMgr.updateProgressUI();
+            // 3. 更新右上角用户信息 (含退出按钮)
+            // 需要确保 HTML header 里还有 id="authDisplay"
+            const authDisplay = document.getElementById('authDisplay');
+            if(authDisplay) {
+                authDisplay.innerHTML = `
+                    <span class="text-slate-500 font-bold mr-2"><i class="fa fa-user-circle text-primary"></i> ${user.email.split('@')[0]}</span>
+                    <button id="btnLogout" class="text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded transition-colors">退出</button>
+                `;
+                document.getElementById('btnLogout').addEventListener('click', async () => {
+                    if(confirm('确定要退出登录吗？')) {
+                        await this.supa.auth.signOut();
+                        window.location.reload(); // 刷新页面重新进入封锁状态
                     }
                 });
-                showToast('云端数据已同步', 'success');
+            }
+
+            // 4. 加载数据
+            this.loadCloudData();
+        }
+
+        async handleLogin() {
+            const email = this.el.email.value;
+            const password = this.el.pwd.value;
+            
+            if(!email || !password) {
+                this.el.msg.textContent = "请输入账号和密码";
+                return;
+            }
+
+            this.el.msg.textContent = "验证身份中...";
+            this.el.btnLogin.disabled = true;
+            this.el.btnLogin.classList.add('opacity-50', 'cursor-not-allowed');
+            
+            // 只调用 SignIn，不再有 SignUp
+            const { data, error } = await this.supa.auth.signInWithPassword({ email, password });
+
+            if (error) {
+                this.el.msg.textContent = "账号或密码错误"; // 模糊提示更安全
+                this.el.btnLogin.disabled = false;
+                this.el.btnLogin.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                this.el.msg.textContent = "登录成功，正在进入...";
+                this.unlockApp(data.user);
+            }
+        }
+
+        // --- 数据同步逻辑 (保持不变) ---
+        async saveData(type, jsonData) {
+            if (!this.user) return; 
+            const { error } = await this.supa
+                .from('user_progress')
+                .upsert({ 
+                    user_id: this.user.id, 
+                    data_type: type, 
+                    content: jsonData 
+                }, { onConflict: 'user_id, data_type' });
+            if(error) console.error('Cloud Save Error:', error);
+        }
+
+        async loadCloudData() {
+            // showToast('正在同步数据...', 'info'); // 可选：去掉这行减少打扰
+            const { data } = await this.supa
+                .from('user_progress')
+                .select('*')
+                .eq('user_id', this.user.id);
+
+            if (data && data.length > 0) {
+                let changed = false;
+                data.forEach(row => {
+                    if (row.data_type === 'errors') {
+                        this.verbMgr.session.errors = row.content;
+                        localStorage.setItem('fr_errors', JSON.stringify(row.content));
+                        changed = true;
+                    }
+                    if (row.data_type === 'progress') {
+                        this.verbMgr.progress = row.content;
+                        localStorage.setItem('fr_progress', JSON.stringify(row.content));
+                        changed = true;
+                    }
+                });
+                if (changed) {
+                    this.verbMgr.renderErrors();
+                    this.verbMgr.updateProgressUI();
+                    showToast(`欢迎回来，${this.user.email.split('@')[0]}`, 'success');
+                }
             }
         }
     }
@@ -1152,4 +1245,5 @@ const SUPA_URL = 'https://kyesnqdokdcgkcjxfcvf.supabase.co';
   </script>
 </body>
 </html>
+
 
