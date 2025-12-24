@@ -1064,9 +1064,6 @@
        } 
     }
     class HomeworkTrans { constructor() { this.lessons=Data.homeworkRaw; this.el={sel:document.getElementById('hwLesson'),src:document.getElementById('hwSource'),in:document.getElementById('hwInput'),next:document.getElementById('btnHwNext'),show:document.getElementById('btnHwShowRef'),refW:document.getElementById('hwRefWrap'),ref:document.getElementById('hwRef'),prog:document.getElementById('hwProgress')}; this.state={idx:0,qIdx:0,revealed:false}; this.el.sel.innerHTML='<option value="random">🎲 随机</option>'+this.lessons.map((l,i)=>`<option value="${i}">${l.title}</option>`).join(''); this.el.sel.addEventListener('change',()=>this.load()); this.el.next.addEventListener('click',()=>this.next()); this.el.show.addEventListener('click',()=>{if(this.state.revealed)this.next();else this.show()}); this.el.in.addEventListener('keydown',(e)=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();if(!this.state.revealed)this.show();else this.next()}}); this.load(); } load(){ const i=this.el.sel.value==='random'?Math.floor(Math.random()*this.lessons.length):parseInt(this.el.sel.value); this.curr=this.lessons[i]; this.state={idx:i,qIdx:0,revealed:false}; this.render(); } render(){ const q=this.curr.qas[this.state.qIdx]; this.el.src.textContent=q.cn; this.el.ref.textContent=q.fr; this.el.prog.textContent=`${this.state.qIdx+1}/${this.curr.qas.length}`; this.el.in.value=''; this.el.refW.classList.add('hidden'); this.el.show.textContent="查看答案 (Enter)"; this.state.revealed=false; } show(){this.el.refW.classList.remove('hidden');this.el.show.textContent="下一题 (Enter)";this.state.revealed=true} next(){if(this.state.qIdx<this.curr.qas.length-1){this.state.qIdx++;this.render()}else{this.load()}} }
-const SUPA_URL = 'https://kyesnqdokdcgkcjxfcvf.supabase.co';
-    const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5ZXNucWRva2RjZ2tjanhmY3ZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY1NDg3NzAsImV4cCI6MjA4MjEyNDc3MH0.pzp0K6zwQUiQR99-pRvjsvuHHpcGVyURTby_e9sFEPI';
-
 // ============================================================
     // AuthManager - 强制登录版 (严禁注册)
     // ============================================================
@@ -1245,4 +1242,5 @@ const SUPA_URL = 'https://kyesnqdokdcgkcjxfcvf.supabase.co';
   </script>
 </body>
 </html>
+
 
